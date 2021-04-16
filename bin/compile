@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Ensure wildcards in globs match dotfiles too.
+shopt -s dotglob
+
 indent() {
     sed -u 's/^/      /'
 }
@@ -23,8 +27,8 @@ SHARED="${STAGE}/$(basename ${APP_BASE})/shared"
     then
         sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${APP_BASE}")/Gemfile" "${STAGE}/$(basename "${APP_BASE}")/Gemfile.lock"
     fi &&
-    rm -rf "${BUILD_DIR}" &&
-    mv "${STAGE}/$(basename "$APP_BASE")" "${BUILD_DIR}"
+    rm -rf "${BUILD_DIR}"/* &&
+    mv "${STAGE}/$(basename "$APP_BASE")"/* "${BUILD_DIR}"
 )
 
 if [ $? -ne 0 ]; then
