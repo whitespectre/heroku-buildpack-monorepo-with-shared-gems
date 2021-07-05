@@ -18,6 +18,17 @@ if [ ! -f "${ENV_DIR}/APP_BASE" ]; then
 fi
 APP_BASE="$(cat "${ENV_DIR}/APP_BASE")"
 SHARED="${STAGE}/$(basename ${APP_BASE})/shared"
+echo '---------------'
+echo 'base'
+echo $APP_BASE
+echo 'shared'
+echo $SHARED
+echo 'build dir'
+echo $BUILD_DIR
+
+echo '---------------'
+ls "${BUILD_DIR}/${APP_BASE}"
+echo '---------------'
 
 (
     mv "${BUILD_DIR}/${APP_BASE}" "${STAGE}" &&
