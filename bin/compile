@@ -37,6 +37,7 @@ echo '---------------'
     if [ -f "${STAGE}/$(basename "${APP_BASE}")/Gemfile" ]
     then
         sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${APP_BASE}")/Gemfile" "${STAGE}/$(basename "${APP_BASE}")/Gemfile.lock"
+        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${APP_BASE}")/package.json" "${STAGE}/$(basename "${APP_BASE}")/yarn.lock"
     fi &&
     rm -rf "${BUILD_DIR}"/* &&
     mv "${STAGE}/$(basename "$APP_BASE")"/* "${BUILD_DIR}"
