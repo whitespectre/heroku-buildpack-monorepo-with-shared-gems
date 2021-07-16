@@ -12,35 +12,35 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 STAGE="$(mktemp -d)"
 
-if [ ! -f "${ENV_DIR}/APP_BASE" ]; then
-    echo "APP_BASE was not set. Aborting" | indent
+if [ ! -f "${ENV_DIR}/IMPLEMENTATION" ]; then
+    echo "IMPLEMENTATION was not set. Aborting" | indent
     exit 1
 fi
-APP_BASE="$(cat "${ENV_DIR}/APP_BASE")"
-SHARED="${STAGE}/$(basename ${APP_BASE})/shared"
+IMPLEMENTATION="$(cat "${ENV_DIR}/IMPLEMENTATION")"
+SHARED="${STAGE}/$(basename ${IMPLEMENTATION})/shared"
 echo '---------------'
 echo 'base'
-echo $APP_BASE
+echo $IMPLEMENTATION
 echo 'shared'
 echo $SHARED
 echo 'build dir'
 echo $BUILD_DIR
 
 echo '---------------'
-ls "${BUILD_DIR}/${APP_BASE}"
+ls "${BUILD_DIR}/implementations/${IMPLEMENTATION}"
 echo '---------------'
 
 (
-    mv "${BUILD_DIR}/${APP_BASE}" "${STAGE}" &&
+    mv "${BUILD_DIR}/implementations/${IMPLEMENTATION}" "${STAGE}" &&
     mkdir -p "${SHARED}" &&
     mv "${BUILD_DIR}/shared/gems" "${SHARED}/" &&
-    if [ -f "${STAGE}/$(basename "${APP_BASE}")/Gemfile" ]
+    if [ -f "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile" ]
     then
-        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${APP_BASE}")/Gemfile" "${STAGE}/$(basename "${APP_BASE}")/Gemfile.lock"
-        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${APP_BASE}")/package.json" "${STAGE}/$(basename "${APP_BASE}")/yarn.lock"
+        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile" "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile.lock"
+        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${IMPLEMENTATION}")/package.json" "${STAGE}/$(basename "${IMPLEMENTATION}")/yarn.lock"
     fi &&
     rm -rf "${BUILD_DIR}"/* &&
-    mv "${STAGE}/$(basename "$APP_BASE")"/* "${BUILD_DIR}"
+    mv "${STAGE}/$(basename "$IMPLEMENTATION")"/* "${BUILD_DIR}"
 )
 
 if [ $? -ne 0 ]; then
@@ -48,5 +48,5 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "Copied ${APP_BASE} to root of app successfully" | indent
+echo "Copied ${IMPLEMENTATION} to root of app successfully" | indent
 
