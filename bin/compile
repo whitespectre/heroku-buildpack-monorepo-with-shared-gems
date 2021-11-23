@@ -19,28 +19,30 @@ fi
 IMPLEMENTATION="$(cat "${ENV_DIR}/IMPLEMENTATION")"
 SHARED="${STAGE}/$(basename ${IMPLEMENTATION})/shared"
 echo '---------------'
-echo 'base'
-echo $IMPLEMENTATION
-echo 'shared'
-echo $SHARED
-echo 'build dir'
-echo $BUILD_DIR
-
-echo '---------------'
-ls "${BUILD_DIR}/implementations/${IMPLEMENTATION}"
-echo '---------------'
 
 (
-    mv "${BUILD_DIR}/implementations/${IMPLEMENTATION}" "${STAGE}" &&
-    mkdir -p "${SHARED}" &&
-    mv "${BUILD_DIR}/shared/gems" "${SHARED}/" &&
+    mv "${BUILD_DIR}/implementations/${IMPLEMENTATION}" $STAGE &&
+    echo "Using ${IMPLEMENTATION}" &&
+    mkdir -p $SHARED &&
+    mv "${BUILD_DIR}/shared/gems" "${SHARED}/gems" &&
+    if [ -f "${BUILD_DIR}/shared/Gemfile" ]; then
+      mv "${BUILD_DIR}/shared/Gemfile" "${SHARED}/Gemfile"
+    else
+      echo 'The old build'
+    fi &&
+    if [ -f "${STAGE}/$(basename "${IMPLEMENTATION}")/package.json" ]; then
+      echo 'Using app personla package.json'
+    else
+      mv "${BUILD_DIR}/package.json" "${STAGE}/$(basename "${IMPLEMENTATION}")" &&
+      mv "${BUILD_DIR}/yarn.lock" "${STAGE}/$(basename "${IMPLEMENTATION}")"
+    fi &&
     if [ -f "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile" ]
     then
-        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile" "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile.lock"
-        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\/gems/shared\/gems/' "${STAGE}/$(basename "${IMPLEMENTATION}")/package.json" "${STAGE}/$(basename "${IMPLEMENTATION}")/yarn.lock"
+        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\//shared\//' "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile" "${STAGE}/$(basename "${IMPLEMENTATION}")/Gemfile.lock"
+        sed --in-place --regexp-extended --expression 's/([.]{2}\/)*shared\//shared\//' "${STAGE}/$(basename "${IMPLEMENTATION}")/package.json" "${STAGE}/$(basename "${IMPLEMENTATION}")/yarn.lock"
     fi &&
     rm -rf "${BUILD_DIR}"/* &&
-    mv "${STAGE}/$(basename "$IMPLEMENTATION")"/* "${BUILD_DIR}"
+    mv "${STAGE}/$(basename "$IMPLEMENTATION")"/* $BUILD_DIR
 )
 
 if [ $? -ne 0 ]; then
