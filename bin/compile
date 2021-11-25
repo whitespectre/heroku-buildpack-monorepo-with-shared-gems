@@ -20,8 +20,9 @@ IMPLEMENTATION="$(cat "${ENV_DIR}/IMPLEMENTATION")"
 SHARED="${STAGE}/$(basename ${IMPLEMENTATION})/shared"
 echo '---------------'
 
+# -RL follows symlink content and copies respectivly, so in in a copy - only files
 (
-    mv "${BUILD_DIR}/implementations/${IMPLEMENTATION}" $STAGE &&
+    cp -RL "${BUILD_DIR}/implementations/${IMPLEMENTATION}" $STAGE &&
     echo "Using ${IMPLEMENTATION}" &&
     mkdir -p $SHARED &&
     mv "${BUILD_DIR}/shared/gems" "${SHARED}/gems" &&
