@@ -32,7 +32,7 @@ echo '---------------'
       echo 'The old build'
     fi &&
     if [ -f "${STAGE}/$(basename "${IMPLEMENTATION}")/package.json" ]; then
-      echo 'Using app personla package.json'
+      echo 'Using the app personal package.json'
     else
       mv "${BUILD_DIR}/package.json" "${STAGE}/$(basename "${IMPLEMENTATION}")" &&
       mv "${BUILD_DIR}/yarn.lock" "${STAGE}/$(basename "${IMPLEMENTATION}")"
@@ -52,4 +52,5 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Copied ${IMPLEMENTATION} to root of app successfully" | indent
+cat "$BUILD_DIR/Gemfile.lock"
 
